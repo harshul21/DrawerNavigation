@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.Gravity
 import android.view.Gravity.RIGHT
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -66,6 +68,7 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
 import com.example.navigationdrawer.ui.theme.NavigationDrawerTheme
 import kotlinx.coroutines.launch
 
@@ -209,9 +212,35 @@ fun tabRow() {
                 .weight(1f)
         ) { index ->
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text(text = tabItem[index].title)
+
+                if(tabItem[index].title == "Web" )
+                {
+                    WebViewScreen()
+                }
+                else
+                    Text(text = tabItem[index].title)
             }
         }
     }
+}
+
+@Composable
+fun WebViewScreen() {
+
+    AndroidView(
+        factory = { context ->
+            WebView(context).apply {
+                settings.javaScriptEnabled = true
+                webViewClient = WebViewClient()
+
+                settings.loadWithOverviewMode = true
+                settings.useWideViewPort = true
+                settings.setSupportZoom(true)
+            }
+        },
+        update = { webView ->
+            webView.loadUrl("https://www.google.com/search?q=android&sca_esv=09054e7a388018cf&tbm=isch&source=hp&biw=1536&bih=735&ei=yhRvZoHDLpClvr0Px5efkQ8&iflsig=AL9hbdgAAAAAZm8i2ppAbkXyPDNll0nd0eP0Cl1vGykB&ved=0ahUKEwiB0Iu4x-CGAxWQkq8BHcfLJ_IQ4dUDCAc&uact=5&oq=android&gs_lp=EgNpbWciB2FuZHJvaWQyCBAAGIAEGLEDMgUQABiABDIFEAAYgAQyCBAAGIAEGLEDMggQABiABBixAzIFEAAYgAQyBRAAGIAEMggQABiABBixAzIIEAAYgAQYsQMyCBAAGIAEGLEDSPIGUHlYngZwAHgAkAEAmAHGAqAByQiqAQcwLjQuMS4xuAEDyAEA-AEBigILZ3dzLXdpei1pbWeYAgagAuwIqAIAwgILEAAYgAQYsQMYgwHCAg4QABiABBixAxiDARiKBcICBBAAGAOYAwSSBwcwLjQuMS4xoAf0HQ&sclient=img")
+        }
+    )
 }
 
